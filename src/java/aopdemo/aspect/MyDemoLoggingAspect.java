@@ -19,4 +19,8 @@ public class MyDemoLoggingAspect {
         System.out.println("\n========== Executing @Before advice on addAccount()");
     }
 
+    @Before("forDaoPackageNoGetterSetter()")
+    public void performApiAnalytics(){
+        System.out.println("========== Performing API analytics");
+    }
 }
