@@ -41,7 +41,11 @@ public class AccountDAO {
         return false;
     }
 
-    public List<Account> findAccounts(){
+    public List<Account> findAccounts(boolean tripWire){
+
+        if(tripWire){
+            throw  new RuntimeException("--Exception--");
+        }
 
         List<Account> accountList = new ArrayList<>();
 
