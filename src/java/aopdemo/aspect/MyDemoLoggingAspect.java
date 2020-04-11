@@ -2,14 +2,14 @@ package aopdemo.aspect;
 
 import aopdemo.Account;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.AccessibleObject;
+import java.util.List;
 
 @Aspect
 @Component
@@ -23,6 +23,27 @@ public class MyDemoLoggingAspect {
 //    @Before("execution(public void addAccount())")
 //    @Before("execution(* aopdemo.dao.*.*(..))")
 
+    @AfterReturning(
+            pointcut = "execution(* aopdemo.dao.AccountDAO.findAccounts(..))",
+            returning = "result")
+    public void afterReturningFindAccountsAdvice(JoinPoint joinPoint, List<Account> result){
+
+        String method = joinPoint.getSignature().toShortString();
+        System.out.println("\n========== Executing @AfterReturning on method: " + method);
+
+        System.out.println("\n========== result is: " + result);
+
+        convertAccountNamesToUpperCase(result);
+    }
+
+    private void convertAccountNamesToUpperCase(List<Account> result) {
+
+        for (Account account : result) {
+            String upperName = account.getName().toUpperCase();
+            account.setName(upperName);
+        }
+
+    }
 
     @Before("aopdemo.aspect.AopExpressions.forDaoPackageNoGetterSetter()")
     public void beforeAddAccountAdvice(JoinPoint joinPoint) {
