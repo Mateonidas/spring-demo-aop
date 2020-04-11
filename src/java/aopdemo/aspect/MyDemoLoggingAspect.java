@@ -9,11 +9,14 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @Aspect
 @Component
 @Order(2)
 public class MyDemoLoggingAspect {
+
+    private Logger logger = Logger.getLogger(getClass().getName());
 
 //    @Before("execution(public void aopdemo.dao.AccountDAO.addAccount())")
 //    @Before("execution(public void add*())")
@@ -26,16 +29,25 @@ public class MyDemoLoggingAspect {
     public Object aroundGetFortune(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 
         String method = proceedingJoinPoint.getSignature().toShortString();
-        System.out.println("\n========== Executing @After (finally) on method: " + method);
+        logger.info("\n========== Executing @After (finally) on method: " + method);
 
         long begin = System.currentTimeMillis();
 
-        Object result = proceedingJoinPoint.proceed();
+        Object result;
+
+        try {
+            result = proceedingJoinPoint.proceed();
+        } catch (Exception e){
+            logger.warning(e.getMessage());
+
+            result = "Major accident! But no worries.";
+        }
+
 
         long end = System.currentTimeMillis();
 
         long duration = end - begin;
-        System.out.println("\n========== Duration: " + duration/1000.0 + " seconds");
+        logger.info("\n========== Duration: " + duration/1000.0 + " seconds");
 
         return result;
     }
@@ -44,7 +56,7 @@ public class MyDemoLoggingAspect {
     public void afterFinallyFindAccountsAdvice(JoinPoint joinPoint) {
 
         String method = joinPoint.getSignature().toShortString();
-        System.out.println("\n========== Executing @After (finally) on method: " + method);
+        logger.info("\n========== Executing @After (finally) on method: " + method);
 
     }
 
@@ -54,9 +66,9 @@ public class MyDemoLoggingAspect {
     public void afterThrowingFindAccountsAdvice(JoinPoint joinPoint, Throwable exc) {
 
         String method = joinPoint.getSignature().toShortString();
-        System.out.println("\n========== Executing @AfterThrowing on method: " + method);
+        logger.info("\n========== Executing @AfterThrowing on method: " + method);
 
-        System.out.println("\n========== The exception is: " + exc);
+        logger.info("\n========== The exception is: " + exc);
 
     }
 
@@ -66,9 +78,9 @@ public class MyDemoLoggingAspect {
     public void afterReturningFindAccountsAdvice(JoinPoint joinPoint, List<Account> result) {
 
         String method = joinPoint.getSignature().toShortString();
-        System.out.println("\n========== Executing @AfterReturning on method: " + method);
+        logger.info("\n========== Executing @AfterReturning on method: " + method);
 
-        System.out.println("\n========== result is: " + result);
+        logger.info("\n========== result is: " + result);
 
         convertAccountNamesToUpperCase(result);
     }
@@ -85,22 +97,22 @@ public class MyDemoLoggingAspect {
     @Before("aopdemo.aspect.AopExpressions.forDaoPackageNoGetterSetter()")
     public void beforeAddAccountAdvice(JoinPoint joinPoint) {
 
-        System.out.println("========== Executing @Before advice on addAccount()");
+        logger.info("========== Executing @Before advice on addAccount()");
 
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-        System.out.println("Method: " + methodSignature);
+        logger.info("Method: " + methodSignature);
 
         Object[] args = joinPoint.getArgs();
 
         for (Object tempArg : args) {
-            System.out.println(tempArg);
+            logger.info(tempArg.toString());
 
             if (tempArg instanceof Account) {
 
                 Account account = (Account) tempArg;
 
-                System.out.println("Account name: " + account.getName());
-                System.out.println("Account level: " + account.getLevel());
+                logger.info("Account name: " + account.getName());
+                logger.info("Account level: " + account.getLevel());
 
             }
         }

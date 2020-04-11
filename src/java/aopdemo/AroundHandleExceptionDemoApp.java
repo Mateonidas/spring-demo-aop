@@ -3,22 +3,27 @@ package aopdemo;
 import aopdemo.service.TrafficFortuneService;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-public class AroundDemoApp {
+import java.util.logging.Logger;
+
+public class AroundHandleExceptionDemoApp {
+
+    private static Logger logger = Logger.getLogger(AroundHandleExceptionDemoApp.class.getName());
 
     public static void main(String[] args) {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(DemoConfig.class);
 
         TrafficFortuneService fortuneService = context.getBean("trafficFortuneService", TrafficFortuneService.class);
 
-        System.out.println("\nMaing Program: AroundDemoApp");
+        logger.info("\nMaing Program: AroundDemoApp");
 
-        System.out.println("\nCalling getFortune");
+        logger.info("\nCalling getFortune");
 
-        String data = fortuneService.getFortune();
+        boolean tripWire = true;
+        String data = fortuneService.getFortune(tripWire);
 
-        System.out.println("\nMy fortune is: " + data);
+        logger.info("\nMy fortune is: " + data);
 
-        System.out.println("Finished");
+        logger.info ("Finished");
 
         context.close();
     }
