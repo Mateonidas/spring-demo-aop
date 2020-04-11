@@ -2,10 +2,7 @@ package aopdemo.aspect;
 
 import aopdemo.Account;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -24,10 +21,18 @@ public class MyDemoLoggingAspect {
 //    @Before("execution(public void addAccount())")
 //    @Before("execution(* aopdemo.dao.*.*(..))")
 
+    @After("aopdemo.aspect.AopExpressions.forFindAccounts()")
+    public void afterFinallyFindAccountsAdvice(JoinPoint joinPoint) {
+
+        String method = joinPoint.getSignature().toShortString();
+        System.out.println("\n========== Executing @After (finally) on method: " + method);
+
+    }
+
     @AfterThrowing(
-            pointcut = "execution(* aopdemo.dao.AccountDAO.findAccounts(..))",
+            pointcut = "aopdemo.aspect.AopExpressions.forFindAccounts()",
             throwing = "exc")
-    public void afterThrowingFindAccountsAdvice(JoinPoint joinPoint, Throwable exc){
+    public void afterThrowingFindAccountsAdvice(JoinPoint joinPoint, Throwable exc) {
 
         String method = joinPoint.getSignature().toShortString();
         System.out.println("\n========== Executing @AfterThrowing on method: " + method);
@@ -37,9 +42,9 @@ public class MyDemoLoggingAspect {
     }
 
     @AfterReturning(
-            pointcut = "execution(* aopdemo.dao.AccountDAO.findAccounts(..))",
+            pointcut = "aopdemo.aspect.AopExpressions.forFindAccounts()",
             returning = "result")
-    public void afterReturningFindAccountsAdvice(JoinPoint joinPoint, List<Account> result){
+    public void afterReturningFindAccountsAdvice(JoinPoint joinPoint, List<Account> result) {
 
         String method = joinPoint.getSignature().toShortString();
         System.out.println("\n========== Executing @AfterReturning on method: " + method);
@@ -71,7 +76,7 @@ public class MyDemoLoggingAspect {
         for (Object tempArg : args) {
             System.out.println(tempArg);
 
-            if (tempArg instanceof Account){
+            if (tempArg instanceof Account) {
 
                 Account account = (Account) tempArg;
 
