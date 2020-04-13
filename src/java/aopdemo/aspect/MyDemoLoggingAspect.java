@@ -40,7 +40,7 @@ public class MyDemoLoggingAspect {
         } catch (Exception e){
             logger.warning(e.getMessage());
 
-            result = "Major accident! But no worries.";
+            throw e;
         }
 
 
